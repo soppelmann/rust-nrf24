@@ -716,7 +716,6 @@ impl NRF24L01 {
                 ));
             };
             // Success
-            counter += observe & 0x0f;
             let (_, fifo_status) = self.read_register(FIFO_STATUS)?;
             packets_left = fifo_status & 0x10 == 0;
         }
