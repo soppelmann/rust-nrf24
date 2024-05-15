@@ -3,30 +3,33 @@ use std::io;
 use rppal::gpio::{Level, Gpio, OutputPin};
 
 pub struct CEPin {
-    pin: OutputPin,
+    gpio: OutputPin,
     value: Level,
     saved_value: Level,
 }
 
 impl CEPin {
     pub fn new(pin_num: u64) -> io::Result<CEPin> {
-        let gpio = Gpio::new().unwrap();
-        let pin = gpio.get(pin_num as u8).unwrap().into_output();
+        let pin_num8 = pin_num as u8;
+        let gpio = GPIO::new().unwrap();
+
+        let pin = gpio.get(pin_num8).unwrap().into_output();
+
         Ok(CEPin {
-            pin,
+            gpio: pin,
             value: Level::Low,
             saved_value: Level::Low,
         })
     }
 
     pub fn up(&mut self) -> io::Result<()> {
-        self.pin.write(Level::High);
+        self.gpio.set_high();
         self.value = Level::High;
         Ok(())
     }
 
     pub fn down(&mut self) -> io::Result<()> {
-        self.pin.write(Level::Low);
+        self.gpio.set_low();
         self.value = Level::Low;
         Ok(())
     }
@@ -36,7 +39,11 @@ impl CEPin {
     }
 
     pub fn restore_state(&mut self) -> io::Result<()> {
-        self.pin.write(self.saved_value);
+        match self.saved_value {
+            Level::High => self.gpio.set_high(),
+            Level::Low => self.gpio.set_low(),
+        }
+
         self.value = self.saved_value;
         Ok(())
     }
