@@ -11,7 +11,7 @@ pub struct CEPin {
 impl CEPin {
     pub fn new(pin_num: u64) -> io::Result<CEPin> {
         let pin_num8 = pin_num as u8;
-        let gpio = Gpio::new().unwrap();
+        let gpio = GPIO::new().unwrap();
 
         let pin = gpio.get(pin_num8).unwrap().into_output();
 
