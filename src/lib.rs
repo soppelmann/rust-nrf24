@@ -686,7 +686,7 @@ impl NRF24L01 {
         // clear TX_DS and MAX_RT
         self.write_register(STATUS, 0x30)?;
         // init retry counter
-        let mut counter = 0u8;
+        let mut counter = 0u16;
         let (_, fifo_status) = self.read_register(FIFO_STATUS)?;
         let mut packets_left = fifo_status & 0x10 == 0;
         while packets_left {
@@ -716,7 +716,7 @@ impl NRF24L01 {
                 ));
             };
             // Success
-            counter += observe & 0x0f;
+            counter += observe & 0xff;
             let (_, fifo_status) = self.read_register(FIFO_STATUS)?;
             packets_left = fifo_status & 0x10 == 0;
         }
